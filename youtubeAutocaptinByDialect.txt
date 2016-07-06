@@ -5,7 +5,7 @@ Gorgia	M	https://www.youtube.com/watch?v=j0Jp0yfUNPo	13	29
 Gorgia	F	https://www.youtube.com/watch?v=neKnBSKaHTY	12	32
 California	F	https://www.youtube.com/watch?v=NsJqya8XLl4&feature=related	30	43
 California	M	https://www.youtube.com/watch?v=YQR7M5oTPNg&feature=related	22	28
-Scotland (Edinburgh)	M	https://www.youtube.com/watch?v=s_5gKgIb2PY	8	27
-Scotland (Edinburgh)	F	https://www.youtube.com/watch?v=JatocJtUQRM	12	30
-New Zealand	F	https://www.youtube.com/watch?v=BoSJk9K0ePc	11	28
-New Zealand	M	https://www.youtube.com/watch?v=4yTGJ2vOqnA	29	31
+Scotland(Edinburgh)	M	https://www.youtube.com/watch?v=s_5gKgIb2PY	8	27
+Scotland(Edinburgh)	F	https://www.youtube.com/watch?v=JatocJtUQRM	12	30
+NewZealand	F	https://www.youtube.com/watch?v=BoSJk9K0ePc	11	28
+NewZealand	M	https://www.youtube.com/watch?v=4yTGJ2vOqnA	29	31
