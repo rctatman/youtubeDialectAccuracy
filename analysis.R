@@ -10,35 +10,26 @@ x <- getURL("https://raw.githubusercontent.com/rctatman/youtubeDialectAccuracy/m
 data <- read.csv(text = x, sep = "\t", header = T)
 data
 
-#plot
-plot(data$Total, data$Correct, col = data$State)
-plot(data$Correct, data$Total, col = data$Gen)
+#density plots
+# comaring classifiraction accuracy between men and women
+sm.density.compare(percentCorr, data$Gen, xlim = c(0,1))
+legend("topright", levels(data$Gen), col = c("red","green"), lty = c(1,2))
+# between dialect regions
+sm.density.compare(percentCorr, data$State, col = 1:5, xlim = c(0,1))
+legend("topright", levels(data$State), col = 1:5, lty = 1:5)
 
-percentCorr <- data$Correct/data$Total
-plot(density(percentCorr))
+# barplots
+numberPerDialect <- 4
+numberPerGender <- 10 
+ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity")
+ggplot(data, aes(x = factor(Gen), y = percentCorr/numberPerGender)) + geom_bar(stat = "identity")
 
-plot(density(percentCorr[data$Gen== "F"]))
-plot(density(percentCorr[data$Gen== "M"]), add = T)
-
-sm.density.compare(percentCorr, data$Gen)
-legend(locator(), levels(data$Gen), col = c("red","green"))
-sm.density.compare(percentCorr, data$State)
-
-# linear model
-percentCorr <- data$Correct/data$Total
-fit <- lm(percentCorr ~ Gen, data = data)
-plot(fit)
-
-
-ggplot(data, aes(x = factor(State), y = percentCorr*100)) + geom_bar(stat = "identity")
-ggplot(data, aes(x = factor(Gen), y = percentCorr)) + geom_bar(stat = "identity")
-
-
-ggplot(data, aes(x = percentCorr)) + geom_bar(stat = "identity") 
-
-
-interplot(fit, var1 = "Correct")
-interplot(fit, var1 = "percentCorr", var2 = "Gen")
 
 # is there a reliable differnce between men and women?
 t.test(percentCorr[data$Gen== "F"], percentCorr[data$Gen== "M"])
+
+# what about between dialect regions? 
+summary(aov(formula = percentCorr ~ State, data = data))
+
+# state and dialect region? 
+summary(aov(formula = percentCorr ~ State + Gen, data = data))
