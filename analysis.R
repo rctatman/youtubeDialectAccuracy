@@ -1,11 +1,17 @@
-# Youtube dialect study
+# Youtube dialect and study
 
-# library we'll need
+# Data is the number of correct transcriptions and total words for the word-list
+# portion of "accent challange" or "accent tag" (more info: 
+# http://www.pri.org/stories/2015-07-21/accent-quiz-swept-english-speaking-world)
+# videos. All transcriptions are taken from auto captions provided by YouTube,
+# using Google's speech recogntion technology.
+
+# libraries we'll need
 library(ggplot2)
 library(RCurl)
 library(sm)
 library(plyr)
-library(plotly)
+library(png)
 
 # Read in file (from copy on Github)
 x <- getURL("https://raw.githubusercontent.com/rctatman/youtubeDialectAccuracy/master/youtubeAutocaptinByDialect.txt")
@@ -32,12 +38,34 @@ legend("topright", levels(data$State), col = 1:5, lty = 1:5)
 numberPerDialect <- 8
 numberPerGender <- 20 
 ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity") + ylim(0,1)
-ggplot(data, aes(x = factor(Gen), y = percentCorr/numberPerGender)) + geom_bar(stat = "identity")+ ylim(0,1)
+ggplot(data, aes(x = factor(Gen), y = percentCorr/numberPerGender)) + geom_bar(stat = "identity") + ylim(0,1)
+# prettied up barplot with flags
+library(grImport)
+setwd("Dropbox/miscPersonal/youtubeDialectAccuracy/flagImages") # set the directory to where our flag images are
+# images MUST be in .ps format
+PostScriptTrace("Flag_of_the_United_States.ps", "Flag_of_the_United_States.xml")
+usFlag <- readPicture("Flag_of_the_United_States.xml")
+grid.picture(usFlag) #plots US flag
+
+img <- readPNG("american-flag-small.png")
+g <- rasterGrob(img, interpolate=TRUE)
+g <- grid.picture(usFlag)
+
+
+barplot(gen)
+
+ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) +
+  annotation_custom(g, xmin=4.5, xmax=5.5, ymin=3, ymax=4) +
+  geom_bar(stat = "identity") +
+  ylim(0,1) 
+
+ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity", alpha = 1/3) +
+  ylim(0,1) 
+# I think you can add a picture *over* a bar with annotation_custom() from ggplot, but they need to be in .png format
 
 # seperate by gender
 men <- data[data$Gen == "M",]
 percentCorrMen <- men$Correct/men$Total
-
 women <- data[data$Gen == "F",]
 percentCorrWo <- women$Correct/women$Total
 
@@ -77,3 +105,4 @@ summary(aov(formula = percentCorr ~ State, data = data))
 
 # state and dialect region? 
 summary(aov(formula = percentCorr ~ State + Gen, data = data))
+=
