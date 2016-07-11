@@ -12,6 +12,7 @@ library(RCurl)
 library(sm)
 library(plyr)
 library(lme4)
+library(pwr)
 
 # Read in file (from copy on Github)
 x <- getURL("https://raw.githubusercontent.com/rctatman/youtubeDialectAccuracy/master/youtubeAutocaptinByDialect.txt")
@@ -39,16 +40,13 @@ numberPerDialect <- 10
 numberPerGender <- 25
 ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity") + ylim(0,1)
 ggplot(data, aes(x = factor(Gen), y = percentCorr/numberPerGender)) + geom_bar(stat = "identity") + ylim(0,1)
-# prettied up barplot
-data$State <- factor(data$State, levels = c("California","NewZealand","Maine","Gorgia","Scotland"))
+
+# prettied up boxplot
+data$State <- factor(data$State, levels = c("California","NewZealand","Maine","Georgia","Scotland"))
 ggplot(data, aes(x = factor(State), y = percentCorr, fill = State)) +
   geom_boxplot() + geom_point() + scale_fill_manual(values = c("#B22234","royalblue4","#B22234","#B22234","white")) +
   ylim(0,1) + xlab("") + ylab("Proportion of Correctly Recognized Words") +  guides(fill=FALSE) +
   theme(text = element_text(size=20))
-
-ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity", alpha = 1/3) +
-  ylim(0,1) 
-# I think you can add a picture *over* a bar with annotation_custom() from ggplot, but they need to be in .png format
 
 # seperate by gender
 men <- data[data$Gen == "M",]
@@ -77,10 +75,10 @@ ggplot(data = diff, aes(x = State, y = diff)) + ylim(-1, 1) +
 #barplots of individuals
 sortedData <- data[order(percentCorr),]
 percentCorrSorted <- percentCorr[order(percentCorr)]
-# by gender
+# colored by gender
 barplot(percentCorrSorted, col = sortedData$Gen)
 legend("topleft", levels(data$Gen), col = c("black","red"), lty = 1)
-# by region
+# colored by region
 barplot(percentCorrSorted, col = sortedData$State)
 legend("topleft", levels(data$State), col = c(1:5), lty = 1)
 
