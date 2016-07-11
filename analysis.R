@@ -11,7 +11,7 @@ library(ggplot2)
 library(RCurl)
 library(sm)
 library(plyr)
-library(png)
+library(lme4)
 
 # Read in file (from copy on Github)
 x <- getURL("https://raw.githubusercontent.com/rctatman/youtubeDialectAccuracy/master/youtubeAutocaptinByDialect.txt")
@@ -35,29 +35,16 @@ sm.density.compare(percentCorr, data$State, col = 1:5, xlim = c(0,1))
 legend("topright", levels(data$State), col = 1:5, lty = 1:5)
 
 # barplots
-numberPerDialect <- 8
-numberPerGender <- 20 
+numberPerDialect <- 10
+numberPerGender <- 25
 ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity") + ylim(0,1)
 ggplot(data, aes(x = factor(Gen), y = percentCorr/numberPerGender)) + geom_bar(stat = "identity") + ylim(0,1)
-# prettied up barplot with flags
-library(grImport)
-setwd("Dropbox/miscPersonal/youtubeDialectAccuracy/flagImages") # set the directory to where our flag images are
-# images MUST be in .ps format
-PostScriptTrace("Flag_of_the_United_States.ps", "Flag_of_the_United_States.xml")
-usFlag <- readPicture("Flag_of_the_United_States.xml")
-grid.picture(usFlag) #plots US flag
-
-img <- readPNG("american-flag-small.png")
-g <- rasterGrob(img, interpolate=TRUE)
-g <- grid.picture(usFlag)
-
-
-barplot(gen)
-
-ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) +
-  annotation_custom(g, xmin=4.5, xmax=5.5, ymin=3, ymax=4) +
-  geom_bar(stat = "identity") +
-  ylim(0,1) 
+# prettied up barplot
+data$State <- factor(data$State, levels = c("California","NewZealand","Maine","Gorgia","Scotland"))
+ggplot(data, aes(x = factor(State), y = percentCorr, fill = State)) +
+  geom_boxplot() + geom_point() + scale_fill_manual(values = c("#B22234","royalblue4","#B22234","#B22234","white")) +
+  ylim(0,1) + xlab("") + ylab("Proportion of Correctly Recognized Words") +  guides(fill=FALSE) +
+  theme(text = element_text(size=20))
 
 ggplot(data, aes(x = factor(State), y = percentCorr/numberPerDialect)) + geom_bar(stat = "identity", alpha = 1/3) +
   ylim(0,1) 
@@ -102,7 +89,22 @@ t.test(percentCorr[data$Gen== "F"], percentCorr[data$Gen== "M"])
 
 # what about between dialect regions? 
 summary(aov(formula = percentCorr ~ State, data = data))
+# power analysis
+pwr.anova.test(k=5,f=.25,sig.level=.05,power=.8)
 
 # state and dialect region? 
 summary(aov(formula = percentCorr ~ State + Gen, data = data))
-=
+
+# lienar models
+model1 <- lm(data$Correct ~ data$Total + data$Gen)
+model2 <- lm(data$Correct ~ data$Total + data$State + data$Gen)
+anova(model1, model2)
+
+# only for women
+model1 <- lm(women$Correct ~ women$Total)
+model2 <- lm(women$Correct ~ women$Total + women$State)
+anova(model1, model2)
+# only for men
+model1 <- lm(men$Correct ~ men$Total)
+model2 <- lm(men$Correct ~ men$Total + men$State)
+anova(model1, model2)
